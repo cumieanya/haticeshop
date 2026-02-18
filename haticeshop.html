@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HATICE ✨ Ultra Sparkle</title>
+    
+    <!-- Bubbly & Bold Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<style>
+:root {
+    /* Main Bubbly Palette */
+    --honeydew: #f0fff0;   /* Main Background */
+    --blush: #f2afbc;      /* Card Accents */
+    --mulberry: #c54b8c;   /* Primary Buttons / Shimmer */
+    --red-wine: #9e182b;   /* Borders / Critical Text */
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.95);
+}
+
+/* ✨ GLITTER & SPARKLE ANIMATIONS ✨ */
+@keyframes bg-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes title-sparkle {
+    0% { background-position: 0% center; }
+    100% { background-position: -200% center; }
+}
+
+@keyframes star-float {
+    0% { transform: translateY(0) scale(1) rotate(0); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(-100vh) scale(0.5) rotate(360deg); opacity: 0; }
+}
+
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+    font-family: 'Bubblegum Sans', cursive; 
+}
+
+body {
+    background: linear-gradient(-45deg, var(--honeydew), var(--blush), var(--honeydew), var(--blush));
+    background-size: 400% 400%;
+    animation: bg-move 15s ease infinite;
+    margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden;
+    color: var(--red-wine);
+}
+
+.stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+.star { position: absolute; bottom: -50px; color: var(--mulberry); animation: star-float 6s linear infinite; }
+
+.container {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem 1.5rem;
+    border-radius: 45px;
+    box-shadow: 10px 10px 0px var(--red-wine);
+    width: 100%; max-width: 500px;
+    border: 5px solid var(--red-wine);
+    margin-bottom: 25px; display: none;
+    animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.active { display: block; }
+
+/* SHIMMER TITLE */
+h1 {
+    font-family: 'Titan One', cursive;
+    text-align: center; font-size: 4rem; margin: 0;
+    background: linear-gradient(90deg, var(--mulberry), var(--red-wine), var(--white), var(--mulberry), var(--red-wine));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: title-sparkle 4s linear infinite;
+    filter: drop-shadow(3px 3px 0 var(--white));
+    letter-spacing: -2px;
+}
+
+/* Lightened Admin Section Headers */
+#page-admin-panel h2, #page-admin-login h2 {
+    color: var(--mulberry);
+    font-family: 'Titan One', cursive;
+    text-shadow: 2px 2px 0 var(--white);
+    font-size: 2.2rem;
+}
+
+.category-scroll {
+    display: flex; overflow-x: auto; gap: 12px; padding: 15px 5px; scrollbar-width: none; margin-bottom: 20px;
+}
+.category-scroll::-webkit-scrollbar { display: none; }
+
+.cat-chip {
+    background: var(--white); padding: 10px 22px; border-radius: 50px;
+    border: 3px solid var(--red-wine); white-space: nowrap; cursor: pointer;
+    font-weight: 900; color: var(--red-wine); box-shadow: 4px 4px 0 var(--red-wine); transition: 0.2s;
+}
+.cat-active { background: var(--mulberry); color: var(--white); transform: translateY(-3px); box-shadow: 5px 5px 0 var(--red-wine); }
+
+/* Buttons */
+.btn-main {
+    font-family: 'Titan One', cursive;
+    background: var(--mulberry); color: white;
+    border: 4px solid var(--red-wine); padding: 18px; border-radius: 30px;
+    font-size: 1.25rem; cursor: pointer; width: 100%; margin-bottom: 15px;
+    box-shadow: 0px 8px 0px var(--red-wine); transition: 0.2s;
+    text-shadow: 1px 1px 0 var(--red-wine);
+}
+.btn-main:hover { transform: scale(1.02); filter: brightness(1.1); }
+.btn-main:active { transform: translateY(4px); box-shadow: 0px 0px 0px var(--red-wine); }
+.btn-secondary { background: var(--blush); color: var(--red-wine); }
+
+/* Item Cards & Admin Rows */
+.item-card, .order-row {
+    background: var(--white); border-radius: 40px; padding: 22px; margin-bottom: 30px;
+    border: 4px solid var(--red-wine); box-shadow: 8px 8px 0 var(--blush);
+    transition: 0.3s;
+}
+
+/* Lighten the text inside Admin Order rows */
+.order-row b { color: var(--mulberry); }
+.order-row small { color: #666; font-weight: 700; }
+
+.item-card img, .cart-thumbnail {
+    width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 30px;
+    border: 4px solid var(--red-wine); margin-bottom: 15px;
+}
+.cart-thumbnail { width: 65px; height: 65px; margin-right: 15px; margin-bottom: 0; }
+
+input, select, textarea {
+    width: 100%; padding: 15px; margin: 10px 0; border: 3px solid var(--red-wine);
+    border-radius: 22px; font-weight: 700; background: var(--white); color: var(--red-wine);
+}
+
+/* Input text in Admin Panel is Mulberry for a "lighter" feel */
+#page-admin-panel input, #page-admin-panel select {
+    color: var(--mulberry);
+    background: #fffcfc;
+}
+
+#cart-count {
+    background: var(--red-wine); color: white; padding: 2px 10px; border-radius: 50px;
+    border: 2px solid var(--white); font-size: 0.85rem;
+}
+
+hr { border: none; border-top: 4px dotted var(--red-wine); margin: 25px 0; opacity: 0.2; }
+</style>
+</head>
+<body>
+
+<div class="stars" id="star-container"></div>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="container active">
+    <h1>HATICE</h1>
+    <p style="text-align:center; font-weight:900; color:var(--vista-blue); margin-bottom:35px; letter-spacing:1px;">✨ PREMIUM SPARKLE VIBES ✨</p>
+    <button class="btn-main" onclick="showPage('page-shop')">🛍️ AVAILABLE ITEMS</button>
+    <button class="btn-main" onclick="showPage('page-status')">🔍 TRACK ORDER</button>
+    <button class="btn-main btn-secondary" onclick="showPage('page-admin-login')">👑 ADMIN PANEL</button>
+</div>
+
+<!-- SHOP PAGE -->
+<div id="page-shop" class="container">
+    <h2 style="text-align:center; font-family:'Titan One'; color:var(--burnt-sienna)">The Shop 🍬</h2>
+    
+    <!-- Categories moved horizontally to top -->
+    <div class="category-scroll" id="cat-list"></div>
+    
+    <select id="price-sort" onchange="loadProducts()">
+        <option value="newest">📅 New Arrivals</option>
+        <option value="low">💰 Low to High</option>
+        <option value="high">💎 High to Low</option>
+    </select>
+    
+    <div id="shop-items"></div>
+    
+    <button class="btn-main" onclick="showPage('page-cart')">🛒 MY BASKET <span id="cart-count">0</span></button>
+    <button class="btn-main btn-secondary" onclick="showPage('page-home')">🔙 BACK</button>
+</div>
+
+<!-- All other pages follow the same container pattern... -->
+<!-- (Cart, Checkout, Status, Admin Login, Admin Panel code sections remain functionally identical but benefit from the new styles) -->
+
+<div id="page-cart" class="container">
+    <h2>My Basket 🧺</h2>
+    <div id="cart-items"></div>
+    <div style="text-align: right; font-size: 2rem; font-family:'Titan One'; color:var(--burnt-sienna);">₱<span id="cart-total">0</span></div>
+    <button class="btn-main" onclick="showPage('page-checkout')">💳 CHECKOUT</button>
+    <button class="btn-main btn-secondary" onclick="showPage('page-shop')">🔙 MORE</button>
+</div>
+
+<div id="page-checkout" class="container">
+    <h2>Details 📦</h2>
+    <input type="text" id="co-name" placeholder="Full Name">
+    <input type="tel" id="co-phone" placeholder="Phone Number" maxlength="11">
+    <div style="display:flex; gap:10px;"><input type="text" id="co-province" placeholder="Province"><input type="text" id="co-municipality" placeholder="City"></div>
+    <input type="text" id="co-barangay" placeholder="Barangay">
+    <textarea id="co-note" rows="2" placeholder="Note..."></textarea>
+    <div style="background:white; padding:20px; border-radius:35px; border:5px solid var(--border-color); text-align:center; margin:15px 0; box-shadow:8px 8px 0 var(--sandwisp);">
+        <b style="color:var(--burnt-sienna); font-size:1.5rem">SCAN TO PAY</b><br>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" style="width:140px; border-radius:20px; margin:15px 0;">
+        <br><b>Total: ₱<span id="co-total-val">0</span></b>
+    </div>
+    <input type="text" id="co-ref" placeholder="Payment Ref #">
+    <button class="btn-main" id="btn-submit-order" onclick="submitOrder()">🚀 CONFIRM ORDER</button>
+    <button class="btn-main btn-secondary" onclick="showPage('page-cart')">🔙 BACK</button>
+</div>
+
+<div id="page-status" class="container">
+    <h2>Tracker</h2>
+    <input type="text" id="search-name" placeholder="Registered Name">
+    <button class="btn-main" onclick="trackOrder()">🔍 SEARCH</button>
+    <div id="status-results"></div>
+    <button class="btn-main btn-secondary" onclick="showPage('page-home')">🔙 BACK</button>
+</div>
+
+<div id="page-admin-login" class="container">
+    <h2>Staff</h2>
+    <input type="password" id="admin-pass" placeholder="Secret Key">
+    <button class="btn-main" onclick="adminAuth()">LOGIN</button>
+    <button class="btn-main btn-secondary" onclick="showPage('page-home')">🔙 BACK</button>
+</div>
+
+<div id="page-admin-panel" class="container">
+    <h2>Dashboard</h2>
+    <button class="btn-main" onclick="toggleAdminView('upload')">➕ UPLOAD PRODUCT</button>
+    <button class="btn-main" onclick="toggleAdminView('items'); loadInventory();">📦 MANAGE ITEMS</button>
+    <button class="btn-main" onclick="toggleAdminView('orders'); loadOrders();">📋 MANAGE ORDERS</button>
+    <div id="admin-upload" style="display:none; margin-top:20px;">
+        <div id="upload-container">
+            <div class="item-card">
+                <select class="p-cat">
+                    <option value="Dress">Dress</option><option value="Top">Top</option><option value="Shorts">Shorts</option>
+                    <option value="Kids Boy">Kids Boy</option><option value="Kids Girl">Kids Girl</option><option value="Bags">Bags</option>
+                </select>
+                <input type="file" class="p-img" accept="image/*">
+                <input type="text" class="p-id" placeholder="ITEM ID">
+                <input type="text" class="p-name" placeholder="Name">
+                <input type="text" class="p-size" placeholder="Sizes (e.g. S,M,L)">
+                <input type="text" class="p-color" placeholder="Colors">
+                <input type="number" class="p-price" placeholder="Price">
+            </div>
+        </div>
+        <button class="btn-main btn-secondary" onclick="addUploadRow()">➕ ADD ROW</button>
+        <button class="btn-main" id="btn-upload-prod" onclick="uploadAllProducts()">🚀 UPLOAD ALL</button>
+    </div>
+    <div id="admin-inventory" style="display:none;"><div id="inventory-list"></div></div>
+    <div id="admin-orders" style="display:none;"><div id="order-list"></div></div>
+    <button class="btn-main btn-secondary" onclick="location.reload()" style="margin-top:20px;">🔙 LOGOUT</button>
+</div>
+
+<script>
+    // --- FIREBASE CONFIG (PROHIBITED FROM CHANGING PER YOUR CONFIG) ---
+    const firebaseConfig = { 
+        apiKey: "AIzaSyDAD_xE2JbwlexYv3n_a_e1Hhnox2kz3Gk", 
+        authDomain: "haticeshop-3a2e1.firebaseapp.com", 
+        projectId: "haticeshop-3a2e1", 
+        storageBucket: "haticeshop-3a2e1.firebasestorage.app", 
+        messagingSenderId: "204224978264", 
+        appId: "1:204224978264:web:5ae915e195181d559a192d" 
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // SPARKLE SYSTEM
+    function createStar() {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.innerText = ['✨', '⭐', '🎀', '🍬'][Math.floor(Math.random() * 4)];
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.fontSize = Math.random() * 20 + 10 + 'px';
+        star.style.animationDuration = Math.random() * 3 + 2 + 's';
+        document.getElementById('star-container').appendChild(star);
+        setTimeout(() => star.remove(), 5000);
+    }
+    setInterval(createStar, 500);
+
+    let cart = JSON.parse(localStorage.getItem('hatice_cart')) || [];
+    let dismissedOrders = JSON.parse(localStorage.getItem('dismissed_orders')) || [];
+    let categories = ["Dress", "Top", "Shorts", "Kids Boy", "Kids Girl", "Bags", "Shoes", "Sandals", "Nails Equipments"];
+    let currentCategory = "Dress";
+    let globalProductPhotos = {};
+
+    function showPage(id) {
+        document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+        if(document.getElementById(id)) document.getElementById(id).classList.add('active');
+        if(id === 'page-shop') renderCategories();
+        if(id === 'page-cart') updateCartUI();
+        window.scrollTo(0,0);
+    }
+
+    function adminAuth() {
+        if (document.getElementById('admin-pass').value === "anne120100") {
+            showPage('page-admin-panel');
+        } else alert("Denied! ❌");
+    }
+
+    function addUploadRow() {
+        const container = document.getElementById('upload-container');
+        const newRow = container.querySelector('.item-card').cloneNode(true);
+        newRow.querySelectorAll('input').forEach(i => i.value = '');
+        container.appendChild(newRow);
+    }
+
+    async function uploadAllProducts() {
+        const groups = document.querySelectorAll('.item-card');
+        const btn = document.getElementById('btn-upload-prod');
+        btn.disabled = true; btn.innerHTML = "✨ Uploading...";
+        for (let g of groups) {
+            const f = g.querySelector('.p-img').files[0];
+            const id = g.querySelector('.p-id').value;
+            if (!f || !id) continue;
+            const b64 = await new Promise(r => {
+                const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = e => r(e.target.result);
+            });
+            await db.collection("products").add({
+                category: g.querySelector('.p-cat').value,
+                itemId: id, name: g.querySelector('.p-name').value,
+                price: parseFloat(g.querySelector('.p-price').value) || 0,
+                size: g.querySelector('.p-size').value, color: g.querySelector('.p-color').value,
+                img: b64, status: "enabled", timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        location.reload();
+    }
+
+    function toggleAdminView(v) {
+        document.getElementById('admin-upload').style.display = v === 'upload' ? 'block' : 'none';
+        document.getElementById('admin-inventory').style.display = v === 'items' ? 'block' : 'none';
+        document.getElementById('admin-orders').style.display = v === 'orders' ? 'block' : 'none';
+    }
+
+    function renderCategories() {
+        const list = document.getElementById('cat-list');
+        list.innerHTML = categories.map(c => `<div class="cat-chip ${c === currentCategory ? 'cat-active' : ''}" onclick="setCat('${c}')">${c}</div>`).join('');
+        loadProducts();
+    }
+
+    function setCat(c) { currentCategory = c; renderCategories(); }
+
+    async function loadProducts() {
+        const div = document.getElementById('shop-items');
+        const sort = document.getElementById('price-sort').value;
+        div.innerHTML = "<p style='text-align:center'>Magic is happening... ✨</p>";
+        const snap = await db.collection("products").where("category", "==", currentCategory).where("status", "==", "enabled").get();
+        div.innerHTML = "";
+        let items = [];
+        snap.forEach(doc => {
+            const d = doc.data(); globalProductPhotos[d.itemId] = d.img;
+            items.push({ id: doc.id, ...d });
+        });
+        if (sort === "low") items.sort((a, b) => a.price - b.price);
+        if (sort === "high") items.sort((a, b) => b.price - a.price);
+        items.forEach(p => {
+            div.innerHTML += `
+                <div class="item-card">
+                    <img src="${p.img}">
+                    <h3 style="margin:5px 0; font-family:'Titan One'">${p.name}</h3>
+                    <p style="color:var(--burnt-sienna); font-weight:800; font-size:1.5rem; margin:5px 0;">₱${p.price}</p>
+                    <div style="display:flex; gap:5px; margin-bottom:10px;">
+                        <select id="sz-${p.id}"><option value="">Size</option>${p.size.split(',').map(s=>`<option>${s.trim()}</option>`)}</select>
+                        <select id="cl-${p.id}"><option value="">Color</option>${p.color.split(',').map(c=>`<option>${c.trim()}</option>`)}</select>
+                    </div>
+                    <input type="number" id="qty-${p.id}" value="1" min="1" style="width:100%; text-align:center">
+                    <button class="btn-main" onclick="addToCart('${p.id}', '${p.itemId}', '${p.name.replace(/'/g, "\\'")}', ${p.price})" style="padding:10px; font-size:1.1rem; margin-top:15px;">🛍️ ADD TO CART</button>
+                </div>`;
+        });
+    }
+
+    function addToCart(docId, itemId, name, price) {
+        const sz = document.getElementById(`sz-${docId}`).value;
+        const cl = document.getElementById(`cl-${docId}`).value;
+        const qty = parseInt(document.getElementById(`qty-${docId}`).value);
+        if(!sz || !cl || qty < 1) return alert("Pick your options! 🎀");
+        cart.push({ itemId, name, sz, cl, qty, price });
+        localStorage.setItem('hatice_cart', JSON.stringify(cart));
+        updateCount();
+        alert("Yay! Added to basket! 💖");
+    }
+
+    function updateCount() { document.getElementById('cart-count').innerText = cart.length; }
+
+    function updateCartUI() {
+        const div = document.getElementById('cart-items');
+        let t = 0;
+        div.innerHTML = cart.length ? cart.map((i, idx) => {
+            t += (i.qty * i.price);
+            return `<div class="item-card" style="display:flex; align-items:center; padding:15px;"><img src="${globalProductPhotos[i.itemId] || ''}" class="cart-thumbnail"><div style="flex:1"><b>${i.name}</b><br><small>${i.sz}/${i.cl} (x${i.qty})</small></div><button onclick="cart.splice(${idx},1);localStorage.setItem('hatice_cart',JSON.stringify(cart));updateCartUI();" style="border:none;background:none;color:var(--burnt-sienna);font-weight:900;font-size:1.5rem;">✕</button></div>`;
+        }).join('') : "<p style='text-align:center'>Basket is empty! 🍭</p>";
+        document.getElementById('cart-total').innerText = t;
+        document.getElementById('co-total-val').innerText = t;
+        updateCount();
+    }
+
+    async function submitOrder() {
+        const n = document.getElementById('co-name').value;
+        const r = document.getElementById('co-ref').value;
+        if(!n || !r) return alert("Name & Payment Ref required! 🎀");
+        const btn = document.getElementById('btn-submit-order'); btn.disabled = true;
+        await db.collection("orders").add({
+            name: n.toLowerCase().trim(), phone: document.getElementById('co-phone').value,
+            province: document.getElementById('co-province').value, municipality: document.getElementById('co-municipality').value,
+            barangay: document.getElementById('co-barangay').value, zip: document.getElementById('co-zip').value,
+            note: document.getElementById('co-note').value, ref: r, items: cart,
+            total: document.getElementById('cart-total').innerText, status: "Pending", timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        localStorage.removeItem('hatice_cart'); cart = [];
+        alert("Success! Thank you. 🚀"); location.reload();
+    }
+
+    async function trackOrder() {
+        const name = document.getElementById('search-name').value.toLowerCase().trim();
+        const snap = await db.collection("orders").where("name", "==", name).get();
+        const res = document.getElementById('status-results'); res.innerHTML = "";
+        if(snap.empty) res.innerHTML = "<p style='text-align:center'>Not found! 🍭</p>";
+        snap.forEach(doc => {
+            if (!dismissedOrders.includes(doc.id)) {
+                const o = doc.data();
+                res.innerHTML += `<div class="item-card"><p><b>Status:</b> ${o.status==='Completed'?'✅ DONE':'⏳ PENDING'}</p><p>Note: ${o.adminNote || 'Verifying...'}</p><button class="btn-main btn-secondary" style="padding:10px; font-size:0.9rem" onclick="dismissOrder('${doc.id}')">Dismiss</button></div>`;
+            }
+        });
+    }
+
+    function dismissOrder(id) { dismissedOrders.push(id); localStorage.setItem('dismissed_orders', JSON.stringify(dismissedOrders)); trackOrder(); }
+
+    async function loadInventory() {
+        const div = document.getElementById('inventory-list');
+        const snap = await db.collection("products").orderBy("timestamp", "desc").get(); div.innerHTML = "";
+        snap.forEach(doc => {
+            const p = doc.data(); const en = p.status === "enabled";
+            div.innerHTML += `<div class="item-card" style="display:flex; align-items:center; gap:10px; padding:15px;"><img src="${p.img}" class="cart-thumbnail" style="width:45px"><b>${p.itemId}</b><button class="btn-main" style="width:auto; padding:5px; font-size:0.8rem; margin:0" onclick="toggleProduct('${doc.id}', '${p.status}')">${en?'HIDE':'SHOW'}</button><button class="btn-main btn-secondary" style="width:auto; padding:5px; font-size:0.8rem; margin:0" onclick="deleteProduct('${doc.id}')">DEL</button></div>`;
+        });
+    }
+
+    async function deleteProduct(id) { if(confirm("Del?")) { await db.collection("products").doc(id).delete(); loadInventory(); } }
+    async function toggleProduct(id, s) { await db.collection("products").doc(id).update({ status: s==="enabled"?"disabled":"enabled" }); loadInventory(); }
+
+    async function loadOrders() {
+        const div = document.getElementById('order-list'); div.innerHTML = "Syncing...";
+        const prodSnap = await db.collection("products").get();
+        prodSnap.forEach(p => globalProductPhotos[p.data().itemId] = p.data().img);
+        const snap = await db.collection("orders").orderBy("timestamp", "desc").get(); div.innerHTML = "";
+        snap.forEach(doc => {
+            const o = doc.data(); const fin = o.status === 'Completed';
+            div.innerHTML += `<div class="item-card" style="border-left:15px solid ${fin? 'var(--sandwisp)':'var(--burnt-sienna)'}"><b>👤 ${o.name.toUpperCase()}</b><br>Ref: ${o.ref} | ₱${o.total}<br><button class="btn-main" style="padding:8px; font-size:0.9rem; margin-top:5px" onclick="markDone('${doc.id}')" ${fin?'disabled':''}>${fin?'VERIFIED':'VERIFY'}</button></div>`;
+        });
+    }
+
+    async function markDone(id) {
+        const n = prompt("Admin Note:"); if (!n) return;
+        await db.collection("orders").doc(id).update({ status: "Completed", adminNote: n.trim() }); loadOrders();
+    }
+
+    document.addEventListener('DOMContentLoaded', updateCount);
+</script>
+
+</body>
+</html>
